@@ -3,18 +3,20 @@ import HabitForm from './components/HabitForm';
 import './styles/App.css';
 import MyButton from './components/UI/Button/MyButton';
 import MyModal from './components/UI/Modal/MyModal';
+import HabitList from './components/HabitList';
 
 function App() {
 
   const [habitsArr, setHabitsArr] = useState([{name: "бегит", description: "", dayTime: "morning", isCurrent: true}]);
   const [currentTask, setCurrentTask] = useState(habitsArr.find(obj => obj.isCurrent === true));
-  const [modal, setModal] = useState(false);
+  const [modalNewHabit, setModalNewHabitNewHabit] = useState(false);
+  const [modalHabitList, setModalHabitList] = useState(false);
   
   console.log(habitsArr);
 
   const createHabit = (newHabit) => {
     setHabitsArr([...habitsArr, newHabit]);
-    setModal(false);
+    setModalNewHabitNewHabit(false);
   }
 
   const incrementCurrent = (e) => {
@@ -51,15 +53,30 @@ function App() {
       </div>
 
       <MyButton
-        onClick={() => setModal(true)}
+        onClick={() => setModalNewHabitNewHabit(true)}
       >Добавить привычку
       </MyButton>
 
       <MyModal
-        visible={modal}
-        setVisible={setModal}
+        visible={modalNewHabit}
+        setVisible={setModalNewHabitNewHabit}
       >
         <HabitForm create={createHabit}/>
+      </MyModal>
+
+      <MyButton
+        onClick = {() => setModalHabitList(true)}
+      >
+        Все привычки
+      </MyButton>
+
+      <MyModal
+        visible={modalHabitList}
+        setVisible={setModalHabitList}
+      >
+        <HabitList
+          habits={habitsArr}
+        />
       </MyModal>
     </>
   )
