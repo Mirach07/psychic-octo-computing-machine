@@ -1,15 +1,23 @@
 import React from 'react';
 import cl from '../styles/HabitItem.module.css'
 
-const HabitItem = ({name, description, dayTime}, props) => {
+const HabitItem = ({name, description, dayTime, isCurrent, isDone}, props) => {
+
+    const rootClasses = [cl.habit__content]
 
     if(!description) {
         description = "Нет описания";
     }
 
+    if(isCurrent) {
+        rootClasses.push(cl.current)
+    }
+
+    
+
   return (
     <div className={cl.habit}>
-        <div className={cl.habit__content}>
+        <div className={rootClasses.join(' ')}>
 
             <h1 className={cl.habit__name}>
                 {name}
@@ -22,6 +30,8 @@ const HabitItem = ({name, description, dayTime}, props) => {
             <div>
                 {dayTime}
             </div>
+
+            {isDone ? <input type='checkbox' checked/> : <input type='checkbox'/>}
         </div>
     </div>
   );

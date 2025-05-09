@@ -7,16 +7,17 @@ const HabitList = ({habits}) => {
 
   return (
     <div>
-        <h1 className='text-center'>
+        <h1 className='text-center text-white font-bold text-4xl mb-4'>
             Все привычки
         </h1>
 
         {habits.map((habit, index) => 
             <HabitItem
-                className = 'flex'
                 name = {habit.name}
                 description = {habit.description}
                 dayTime = {habit.dayTime}
+                isCurrent={habit.isCurrent}
+                isDone={habit.isDone}
                 key = {index + 1}
             />
         )}

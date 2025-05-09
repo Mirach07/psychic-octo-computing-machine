@@ -7,7 +7,7 @@ import HabitList from './components/HabitList';
 
 function App() {
 
-  const [habitsArr, setHabitsArr] = useState([{name: "бегит", description: "", dayTime: "morning", isCurrent: true}]);
+  const [habitsArr, setHabitsArr] = useState([{name: "бегит", description: "", dayTime: "morning", isCurrent: true, isDone: false}]);
   const [currentTask, setCurrentTask] = useState(habitsArr.find(obj => obj.isCurrent === true));
   const [modalNewHabit, setModalNewHabitNewHabit] = useState(false);
   const [modalHabitList, setModalHabitList] = useState(false);
@@ -19,7 +19,7 @@ function App() {
     setModalNewHabitNewHabit(false);
   }
 
-  const incrementCurrent = (e) => {
+  const handleCompleting = (e) => {
     e.preventDefault();
     let updatedHabits;
 
@@ -30,7 +30,7 @@ function App() {
         if (index === prevCurrent + 1) {
           return { ...habit, isCurrent: true };
         } else {
-          return { ...habit, isCurrent: false };
+          return { ...habit, isCurrent: false, isDone: true };
         }
       })
       setHabitsArr(updatedHabits);
@@ -47,7 +47,7 @@ function App() {
     <>
       <div
         className='currentHabit'
-        onClick={(event) => incrementCurrent(event)}
+        onClick={(event) => handleCompleting(event)}
         >
         {currentTask ? currentTask.name : "Всё!"}
       </div>

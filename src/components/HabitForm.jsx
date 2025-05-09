@@ -26,10 +26,11 @@ const HabitForm = ({create}) => {
             create({...newHabit});
 
             setHabit({
-            name: "",
-            description: "",
-            dayTime: "",
-            isCurrent: false
+                name: "",
+                description: "",
+                dayTime: "",
+                isCurrent: false,
+                isDone: false
             });
         }
     }
