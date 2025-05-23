@@ -1,17 +1,18 @@
-import React from 'react';
+import { useContext } from 'react';
 import HabitItem from './HabitItem';
+import { HabitArrContext } from '../context';
 
-const HabitList = ({habits}) => {
+const HabitList = () => {
 
-
-
+  const [habitsArr, setHabitsArr] = useContext(HabitArrContext);
+  
   return (
     <div>
         <h1 className='text-center text-white font-bold text-4xl mb-4'>
             Все привычки
         </h1>
 
-        {habits.map((habit, index) => 
+        {habitsArr.map((habit, index) => 
             <HabitItem
                 name = {habit.name}
                 description = {habit.description}
@@ -19,6 +20,7 @@ const HabitList = ({habits}) => {
                 isCurrent={habit.isCurrent}
                 isDone={habit.isDone}
                 key = {index + 1}
+                id = {habit.id}
             />
         )}
     </div>

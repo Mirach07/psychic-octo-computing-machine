@@ -1,15 +1,20 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import '../styles/App.css';
 import MyInput from "./UI/Input/MyInput";
 import MyButton from "./UI/Button/MyButton";
+import { HabitArrContext } from "../context";
 
-const HabitForm = ({create}) => {
+const HabitForm = ({create, habitsArr}) => {
+
+    
 
     const [habit, setHabit] = useState({
         name: "",
         description: "",
         dayTime: "",
-        isCurrent: false
+        isCurrent: false,
+        isDone: false,
+        query: habitsArr[habitsArr.length - 1].query + 1
     })
 
     const [currentDayTime, setCurrentDayTime] = useState(habit.dayTime);
@@ -30,14 +35,13 @@ const HabitForm = ({create}) => {
                 description: "",
                 dayTime: "",
                 isCurrent: false,
-                isDone: false
+                isDone: false,
+                query: habitsArr[habitsArr.length - 1].query + 1
             });
         }
     }
 
     useEffect(() => setCurrentDayTime(habit.dayTime), [habit]);
-
-    console.log(habit);
 
     return (
         <div>

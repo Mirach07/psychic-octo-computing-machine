@@ -3,6 +3,9 @@
 }
 
 .habit__content {
+    display: flex;
+    flex-direction: column;
+
     padding: 3px 10px;
 
     width: 100%;
@@ -15,16 +18,31 @@
 }
 
 .habit__name {
+    width: fit-content;
+
     font-weight: 700;
     font-size: 16px;
 
     text-transform: uppercase;
 
-    align-self: center;
+    align-self: flex-start;
+
+    background-color: rgba(0, 0, 0, 0.1);
+
+    padding: 3px 7px;
+    margin-top: 6px;
+
+    border-radius: 5px;
 }
 
 .habit__content.current {
     background-color: rgb(199, 199, 199);
     color: rgb(30, 30, 30);
     border-color: rgb(30, 30, 30);
+}
+
+.habit__content.done {
+    background-color: rgb(7, 218, 0);
+    color: rgb(30, 30, 30);
+    border-color: rgb(4, 107, 0);
 }

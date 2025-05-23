@@ -1,0 +1,29 @@
+.checkboxWrapper {
+  display: inline-block;
+  position: relative;
+
+  cursor: pointer;
+
+  align-self: flex-end;
+}
+
+.hiddenCheckbox {
+  display: none;
+}
+
+.customCheckbox {
+  width: 22px;
+  height: 22px;
+
+  background-color: rgb(179, 179, 179);
+  border: 2px solid green;
+  border-radius: 4px;
+
+  display: inline-block;
+
+  transition: 0.15s;
+}
+
+.hiddenCheckbox:checked + .customCheckbox {
+  background-color: green;
+}

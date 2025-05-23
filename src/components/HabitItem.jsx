@@ -1,19 +1,22 @@
-import React from 'react';
+import { HabitItemContext } from '../context';
 import cl from '../styles/HabitItem.module.css'
+import MyCheckbox from './UI/Checkbox/MyCheckbox';
 
-const HabitItem = ({name, description, dayTime, isCurrent, isDone}, props) => {
+const HabitItem = ({name, description, dayTime, isCurrent, isDone, id}) => {
 
-    const rootClasses = [cl.habit__content]
+    const rootClasses = [cl.habit__content];
 
     if(!description) {
         description = "Нет описания";
     }
 
     if(isCurrent) {
-        rootClasses.push(cl.current)
+        rootClasses.push(cl.current);
     }
 
-    
+    if(isDone) {
+        rootClasses.push(cl.done);
+    }
 
   return (
     <div className={cl.habit}>
@@ -30,8 +33,9 @@ const HabitItem = ({name, description, dayTime, isCurrent, isDone}, props) => {
             <div>
                 {dayTime}
             </div>
-
-            {isDone ? <input type='checkbox' checked/> : <input type='checkbox'/>}
+            <HabitItemContext.Provider value={{id: id, isDone: isDone}}>
+                <MyCheckbox/>
+            </HabitItemContext.Provider>
         </div>
     </div>
   );
