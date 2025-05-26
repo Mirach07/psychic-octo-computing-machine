@@ -4,9 +4,9 @@ import MyInput from "./UI/Input/MyInput";
 import MyButton from "./UI/Button/MyButton";
 import { HabitArrContext } from "../context";
 
-const HabitForm = ({create, habitsArr}) => {
+const HabitForm = ({closeModal}) => {
 
-    
+    const [habits, setHabits] = useContext(HabitArrContext);
 
     const [habit, setHabit] = useState({
         name: "",
@@ -14,10 +14,8 @@ const HabitForm = ({create, habitsArr}) => {
         dayTime: "",
         isCurrent: false,
         isDone: false,
-        query: habitsArr[habitsArr.length - 1].query + 1
+        query: 0
     })
-
-    const [currentDayTime, setCurrentDayTime] = useState(habit.dayTime);
 
     const addNewHabit = (e) => {
         e.preventDefault();
@@ -28,7 +26,9 @@ const HabitForm = ({create, habitsArr}) => {
                 ...habit
             };
 
-            create({...newHabit});
+            const closeModalThing = closeModal;
+
+            setHabits([...habits, newHabit]);
 
             setHabit({
                 name: "",
@@ -36,12 +36,22 @@ const HabitForm = ({create, habitsArr}) => {
                 dayTime: "",
                 isCurrent: false,
                 isDone: false,
-                query: habitsArr[habitsArr.length - 1].query + 1
+                query: 0
             });
         }
     }
 
-    useEffect(() => setCurrentDayTime(habit.dayTime), [habit]);
+    useEffect(() => {
+        const queryFilterArray = habits.filter(h => h.dayTime === habit.dayTime);
+
+        console.log(queryFilterArray);
+
+        if(queryFilterArray.length === 0) {
+            setHabit({...habit, query: 1});
+        } else {
+            setHabit(prevHabit => ({ ...prevHabit, query: queryFilterArray.length + 1 }));
+        }
+    }, [habits, habit.dayTime]);
 
     return (
         <div>
@@ -70,7 +80,7 @@ const HabitForm = ({create, habitsArr}) => {
                 <div className='daytimeSelection__wrapper'>
 
                     <span 
-                        className={currentDayTime === "morning" 
+                        className={habit.dayTime === "morning" 
                             ? "dayTimeSelection dayTimeSelection__current" 
                             : "dayTimeSelection"
                         }
@@ -79,7 +89,7 @@ const HabitForm = ({create, habitsArr}) => {
                     Утро
                     </span>
                     <span 
-                        className={currentDayTime === "day"
+                        className={habit.dayTime === "day"
                             ? "dayTimeSelection dayTimeSelection__current"
                             : "dayTimeSelection"
                         }
@@ -88,7 +98,7 @@ const HabitForm = ({create, habitsArr}) => {
                     День
                     </span>
                     <span 
-                        className={currentDayTime === "evening" 
+                        className={habit.dayTime === "evening" 
                             ? "dayTimeSelection dayTimeSelection__current" 
                             : "dayTimeSelection"
                         }

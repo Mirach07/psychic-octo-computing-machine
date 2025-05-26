@@ -4,7 +4,7 @@ import './styles/App.css';
 import MyButton from './components/UI/Button/MyButton';
 import MyModal from './components/UI/Modal/MyModal';
 import HabitList from './components/HabitList';
-import HabitArrProvider, { HabitArrContext } from './context';
+import { HabitArrContext } from './context';
 
 function App() {
 
@@ -15,8 +15,10 @@ function App() {
     isCurrent: true,
     isDone: false,
     query: 1,
-    id: Date.now(),
+    id: Date.now()
   }]);
+
+  
   
   const [currentTask, setCurrentTask] = useState(habitsArr.find(obj => obj.isCurrent === true));
   const [modalNewHabit, setModalNewHabitNewHabit] = useState(false);
@@ -28,6 +30,11 @@ function App() {
   const createHabit = (newHabit) => {
     setHabitsArr([...habitsArr, newHabit]);
     setModalNewHabitNewHabit(false);
+  }
+
+  const closeModal = (closeModal) => {
+    if(closeModal)
+      setModalNewHabitNewHabit(false);
   }
 
   const handleCompleting = () => {
@@ -67,7 +74,35 @@ function App() {
       }
     }
 
-  }, [habitsArr]);
+  }, [habitsArr.isCurrent, habitsArr.isDone]);
+
+  useEffect(() => {
+    const sortHabitsArr = (habitsArr) => {
+
+      const sortAlgorithm = (a, b) => {
+        if(a.query < b.query) return -1;
+        if(a.query > b.query) return 1;
+        return 0;
+      }
+
+      const morningHabits = habitsArr.filter(habit => habit.dayTime === 'morning');
+      const dayHabits = habitsArr.filter(habit => habit.dayTime === 'day');
+      const eveningHabits = habitsArr.filter(habit => habit.dayTime === 'evening');
+
+      const morningHabitsSorted = morningHabits.sort(sortAlgorithm);
+      const dayHabitsSorted = dayHabits.sort(sortAlgorithm);
+      const eveningHabitsSorted = eveningHabits.sort(sortAlgorithm);
+
+      const fullySortedHabitList = [...morningHabitsSorted, ...dayHabitsSorted, ...eveningHabitsSorted];
+
+      const newJson = JSON.stringify(fullySortedHabitList);
+      const oldJson = JSON.stringify(habitsArr);
+      if (newJson !== oldJson) {
+        setHabitsArr(fullySortedHabitList);
+      };
+    }
+    sortHabitsArr(habitsArr);
+  }, [habitsArr])
   
   return (
     <>
@@ -90,9 +125,8 @@ function App() {
         visible={modalNewHabit}
         setVisible={setModalNewHabitNewHabit}
       >
-
         <HabitArrContext.Provider value={[habitsArr, setHabitsArr]}>
-          <HabitForm create={createHabit} habitsArr={habitsArr}/>
+          <HabitForm closeModal={closeModal}/>
         </HabitArrContext.Provider>
       </MyModal>
 
