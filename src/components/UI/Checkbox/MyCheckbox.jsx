@@ -1,17 +1,16 @@
-import React, { useContext, useEffect, useState } from 'react';
+import { useContext, useId } from 'react';
 import cl from "./MyCheckbox.module.css";
-import { HabitArrContext, HabitItemContext } from '../../../context';
+import { HabitArrContext } from '../../../context';
 
-const MyCheckbox = ({checkedState}) => {
+const MyCheckbox = ({id, isDone}) => {
 
-    const {id, isDone} = useContext(HabitItemContext);
+    const passwordHintId = useId();
+
     const [habitsArr, setHabitsArr] = useContext(HabitArrContext);
 
     const handleChange = () => {
         setHabitsArr((prev) => 
-            prev.map(habit => 
-                habit.id === id ? {...habit, isDone: !habit.isDone} : habit
-            )
+            prev.map(habit => habit.id === id ? {...habit, isDone: !habit.isDone} : habit)
         )
     }
 
@@ -22,6 +21,7 @@ const MyCheckbox = ({checkedState}) => {
                 checked={isDone}
                 onChange={handleChange}
                 className={cl.hiddenCheckbox}
+                id={passwordHintId}
             />
             <span className={cl.customCheckbox}></span>
         </label>

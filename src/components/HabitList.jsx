@@ -14,13 +14,8 @@ const HabitList = () => {
 
         {habitsArr.map((habit, index) => 
             <HabitItem
-                name = {habit.name}
-                description = {habit.description}
-                dayTime = {habit.dayTime}
-                isCurrent={habit.isCurrent}
-                isDone={habit.isDone}
                 key = {index + 1}
-                id = {habit.id}
+                index={index}
             />
         )}
     </div>

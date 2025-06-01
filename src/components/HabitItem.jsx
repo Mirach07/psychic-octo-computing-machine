@@ -1,41 +1,43 @@
-import { HabitItemContext } from '../context';
 import cl from '../styles/HabitItem.module.css'
 import MyCheckbox from './UI/Checkbox/MyCheckbox';
+import { HabitArrContext } from '../context';
+import { useContext } from 'react';
 
-const HabitItem = ({name, description, dayTime, isCurrent, isDone, id}) => {
+const HabitItem = ({index}) => {
 
+    const [habitsArr, setHabitsArr] = useContext(HabitArrContext);
     const rootClasses = [cl.habit__content];
 
-    if(!description) {
-        description = "Нет описания";
+    if(habitsArr[index].description == false) {
+        habitsArr[index].description = "Нет описания";
     }
 
-    if(isCurrent) {
+    if(habitsArr[index].isCurrent) {
         rootClasses.push(cl.current);
     }
 
-    if(isDone) {
+    if(habitsArr[index].isDone) {
         rootClasses.push(cl.done);
     }
 
   return (
-    <div className={cl.habit}>
+    <div 
+        className={cl.habit}
+    >
         <div className={rootClasses.join(' ')}>
 
             <h1 className={cl.habit__name}>
-                {name}
+                {habitsArr[index].name}
             </h1>
 
             <div>
-                {description}
+                {habitsArr[index].description}
             </div>
 
             <div>
-                {dayTime}
+                {habitsArr[index].dayTime}
             </div>
-            <HabitItemContext.Provider value={{id: id, isDone: isDone}}>
-                <MyCheckbox/>
-            </HabitItemContext.Provider>
+            <MyCheckbox id={habitsArr[index].id} isDone={habitsArr[index].isDone}/>
         </div>
     </div>
   );

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import '../styles/App.css';
 import MyInput from "./UI/Input/MyInput";
 import MyButton from "./UI/Button/MyButton";
@@ -43,8 +43,6 @@ const HabitForm = ({closeModal}) => {
 
     useEffect(() => {
         const queryFilterArray = habits.filter(h => h.dayTime === habit.dayTime);
-
-        console.log(queryFilterArray);
 
         if(queryFilterArray.length === 0) {
             setHabit({...habit, query: 1});

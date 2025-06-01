@@ -5,10 +5,11 @@ import MyButton from './components/UI/Button/MyButton';
 import MyModal from './components/UI/Modal/MyModal';
 import HabitList from './components/HabitList';
 import { HabitArrContext } from './context';
+import { usePersistedState } from './hooks/usePersistedState';
 
 function App() {
 
-  const [habitsArr, setHabitsArr] = useState([{
+  const [habitsArr, setHabitsArr] = usePersistedState("allHabits", [{
     name: "бегит",
     description: "",
     dayTime: "morning",
@@ -16,16 +17,40 @@ function App() {
     isDone: false,
     query: 1,
     id: Date.now()
-  }]);
+  }])
 
-  
+  const compareLists = (oldList, newList) => {
+    if(JSON.stringify(oldList) !== JSON.stringify(newList))
+      return true;
+    else
+      return false;
+  }
+
+  const sortHabitsArr = (habitsArr) => {
+    const sortAlgorithm = (a, b) => {
+      if(a.query < b.query) return -1;
+      if(a.query > b.query) return 1;
+      return 0;
+    }
+
+    const morningHabits = habitsArr.filter(habit => habit.dayTime === 'morning');
+    const dayHabits = habitsArr.filter(habit => habit.dayTime === 'day');
+    const eveningHabits = habitsArr.filter(habit => habit.dayTime === 'evening');
+
+    const morningHabitsSorted = morningHabits.sort(sortAlgorithm);
+    const dayHabitsSorted = dayHabits.sort(sortAlgorithm);
+    const eveningHabitsSorted = eveningHabits.sort(sortAlgorithm);
+
+    const fullySortedHabitList = [...morningHabitsSorted, ...dayHabitsSorted, ...eveningHabitsSorted];
+
+    if (compareLists(habitsArr, fullySortedHabitList)) {
+      setHabitsArr(fullySortedHabitList);
+    };
+  }
   
   const [currentTask, setCurrentTask] = useState(habitsArr.find(obj => obj.isCurrent === true));
   const [modalNewHabit, setModalNewHabitNewHabit] = useState(false);
   const [modalHabitList, setModalHabitList] = useState(false);
-  
-  console.log("Список привычек:");
-  console.log(habitsArr);
 
   const createHabit = (newHabit) => {
     setHabitsArr([...habitsArr, newHabit]);
@@ -37,72 +62,82 @@ function App() {
       setModalNewHabitNewHabit(false);
   }
 
-  const handleCompleting = () => {
+  const findFirstUndoneTaskIndex = () => {
+    const firstUndoneTaskIndex = habitsArr.findIndex(obj => obj.isDone === false);
+    return firstUndoneTaskIndex;
+  }
 
-    const prevCurrent = habitsArr.findIndex(obj => obj.isCurrent === true);
+  const findCurrentTaskIndex = () => {
+    const currentTaskIndex = habitsArr.findIndex(obj => obj.isCurrent === true);
+    return currentTaskIndex;
+  }
 
-    if(prevCurrent !== -1) {
-      const updatedHabits = habitsArr.map((habit, index) => {
-        if (index === prevCurrent) {
-          return { ...habit, isCurrent: false, isDone: true };
-        } else if (index === prevCurrent + 1) {
-          return { ...habit, isCurrent: true };
-        }
-        return habit;
-      });
-      setHabitsArr(updatedHabits);
+  const setNewCurrentTask = () => {
+    const firstUndoneTaskIndex = findFirstUndoneTaskIndex();
+    const currentTaskIndex = findCurrentTaskIndex();
+    const newHabitsArr = [...habitsArr];
+
+    if (firstUndoneTaskIndex !== -1) {
+      if(currentTaskIndex > firstUndoneTaskIndex) {
+        newHabitsArr[currentTaskIndex].isCurrent = false;
+        newHabitsArr[firstUndoneTaskIndex].isCurrent = true;
+
+        setHabitsArr(newHabitsArr);
+        setCurrentTask(habitsArr.find(obj => obj.isCurrent === true));
+
+      } else if(currentTaskIndex === -1) {
+        newHabitsArr[firstUndoneTaskIndex].isCurrent = true;
+
+        setHabitsArr(newHabitsArr);
+        setCurrentTask(habitsArr.find(obj => obj.isCurrent === true));
+
+      }
+    } else if(currentTaskIndex === -1) {
+      setCurrentTask(null);
+    }
+  }
+
+  //handleCompletition - finds CurrentTask, sets it's isCurrent to true 
+  //then finds first task that isn't done, sets it to current
+  const handleCompletition = () => {
+
+    const oldCurrent = habitsArr.findIndex(obj => obj.isCurrent === true)
+
+    if(oldCurrent !== -1) {
+      const newList = [...habitsArr];
+
+      newList[oldCurrent].isCurrent = false;
+      newList[oldCurrent].isDone = true;
+
+      const newCurrent = findFirstUndoneTaskIndex();
+
+      if(newCurrent !== -1) {
+        newList[newCurrent].isCurrent = true;
+        setHabitsArr(newList);
+        setCurrentTask(habitsArr[newCurrent]);
+      } else {
+        setHabitsArr(newList);
+        setCurrentTask(null);
+      }
     }
   }
 
   useEffect(() => {
-    setCurrentTask(habitsArr.find(obj => obj.isCurrent === true));
-
     habitsArr.map((habit) => {
       if (habit.isCurrent && habit.isDone) {
-        handleCompleting();
+        handleCompletition();
       }
     })
-
-    if (habitsArr.findIndex(habit => habit.isCurrent === true) === -1) {
-      const AintNoDoneYet = habitsArr.findIndex(habit => habit.isDone === false);
-
-      if (AintNoDoneYet !== -1) {
-        const newHabitsArr = habitsArr.map((habit, index) =>
-          index === AintNoDoneYet ? { ...habit, isCurrent: true } : habit
-        );
-        setHabitsArr(newHabitsArr);
-      }
-    }
-
-  }, [habitsArr.isCurrent, habitsArr.isDone]);
-
-  useEffect(() => {
-    const sortHabitsArr = (habitsArr) => {
-
-      const sortAlgorithm = (a, b) => {
-        if(a.query < b.query) return -1;
-        if(a.query > b.query) return 1;
-        return 0;
-      }
-
-      const morningHabits = habitsArr.filter(habit => habit.dayTime === 'morning');
-      const dayHabits = habitsArr.filter(habit => habit.dayTime === 'day');
-      const eveningHabits = habitsArr.filter(habit => habit.dayTime === 'evening');
-
-      const morningHabitsSorted = morningHabits.sort(sortAlgorithm);
-      const dayHabitsSorted = dayHabits.sort(sortAlgorithm);
-      const eveningHabitsSorted = eveningHabits.sort(sortAlgorithm);
-
-      const fullySortedHabitList = [...morningHabitsSorted, ...dayHabitsSorted, ...eveningHabitsSorted];
-
-      const newJson = JSON.stringify(fullySortedHabitList);
-      const oldJson = JSON.stringify(habitsArr);
-      if (newJson !== oldJson) {
-        setHabitsArr(fullySortedHabitList);
-      };
-    }
+    setNewCurrentTask();
     sortHabitsArr(habitsArr);
-  }, [habitsArr])
+  }, [habitsArr]);
+
+  
+
+  console.log("Список привычек:");
+  console.log(habitsArr);
+  console.log("Текущая привычка:");
+  console.log(currentTask);
   
   return (
     <>
@@ -110,7 +145,7 @@ function App() {
         className='currentHabit'
         onClick={(event) => {
           event.preventDefault();
-          handleCompleting()
+          handleCompletition()
         }}
         >
         {currentTask ? currentTask.name : "Всё!"}
